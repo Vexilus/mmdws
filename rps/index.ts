@@ -7,7 +7,7 @@
 // dot notation - bracket notation
 // validation
 
-const {basename, relative} = require('node:path');
+import { basename, relative } from 'node:path';
 
 function pickOne(arr) {
     const choice = Math.floor(Math.random() * arr.length);
@@ -34,7 +34,7 @@ function getResult(userChoice, computerChoice) {
     }
     
     // Should never get here
-    throw new error("Not implemented, get gud");
+    throw new Error("Not implemented, get gud");
 }    
 
 function cleanup(str) {
