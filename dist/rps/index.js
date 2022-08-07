@@ -7,33 +7,52 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // dot notation - bracket notation
 // validation
 const node_path_1 = require("node:path");
+var RPS;
+(function (RPS) {
+    RPS["ROCK"] = "rock";
+    RPS["PAPER"] = "paper";
+    RPS["SCISSORS"] = "scissors";
+    RPS["SPOCK"] = "spock";
+    RPS["POGGIES"] = "poggies";
+    RPS["LIZARD"] = "lizard";
+    RPS["GUN"] = "gun";
+})(RPS || (RPS = {}));
 function pickOne(arr) {
     const choice = Math.floor(Math.random() * arr.length);
     return arr[choice];
 }
 const beatenBy = {
-    "rock": "paper",
-    "paper": "scissors",
-    "scissors": "rock",
+    [RPS.ROCK]: new Set([RPS.PAPER, RPS.SPOCK, RPS.POGGIES]),
+    [RPS.PAPER]: new Set([RPS.SCISSORS, RPS.LIZARD, RPS.POGGIES]),
+    [RPS.SCISSORS]: new Set([RPS.ROCK, RPS.SPOCK, RPS.POGGIES]),
+    [RPS.SPOCK]: new Set([RPS.LIZARD, RPS.PAPER, RPS.POGGIES]),
+    [RPS.LIZARD]: new Set([RPS.ROCK, RPS.SCISSORS, RPS.POGGIES]),
+    [RPS.GUN]: new Set([RPS.PAPER, RPS.LIZARD, RPS.SCISSORS, RPS.ROCK, RPS.SPOCK]),
+    [RPS.POGGIES]: new Set([RPS.GUN]),
 };
 function getResult(userChoice, computerChoice) {
     if (userChoice === computerChoice) {
         return "It's a tie!";
     }
-    if (beatenBy[userChoice] === computerChoice) {
+    if (beatenBy[userChoice].has(computerChoice)) {
         return "You lose :(";
     }
-    if (beatenBy[computerChoice] === userChoice) {
+    if (beatenBy[computerChoice].has(userChoice)) {
         return "You win!";
     }
     // Should never get here
     throw new Error("Not implemented, get gud");
 }
 function cleanup(str) {
-    if (typeof str === "string") {
-        return str.trim().toLowerCase();
+    if (typeof str !== "string") {
+        return null;
     }
-    return null;
+    const clean = str.trim().toLowerCase();
+    if (!Object.hasOwnProperty.call(beatenBy, clean)) {
+        return null;
+    }
+    // here, our input must be a string -- it alos must be a valid choice
+    return clean;
 }
 function main() {
     const choices = Object.keys(beatenBy);

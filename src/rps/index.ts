@@ -9,27 +9,42 @@
 
 import { basename, relative } from 'node:path';
 
-function pickOne(arr: string[]): string {
+enum RPS {
+    ROCK = "rock",
+    PAPER = "paper",
+    SCISSORS = "scissors",
+    SPOCK = "spock",
+    POGGIES = "poggies",
+    LIZARD = "lizard",
+    GUN = "gun"
+}
+
+function pickOne(arr: RPS[]): RPS {
     const choice = Math.floor(Math.random() * arr.length);
     return arr[choice];
 }
 
-const beatenBy = {
-    "rock": "paper",
-    "paper": "scissors",
-    "scissors": "rock",
-
+const beatenBy: {
+    [K in RPS]: Set<RPS>
+} = {
+    [RPS.ROCK]: new Set([RPS.PAPER, RPS.SPOCK, RPS.POGGIES]),
+    [RPS.PAPER]: new Set([RPS.SCISSORS, RPS.LIZARD, RPS.POGGIES]),
+    [RPS.SCISSORS]: new Set([RPS.ROCK, RPS.SPOCK, RPS.POGGIES]),
+    [RPS.SPOCK]: new Set([RPS.LIZARD, RPS.PAPER, RPS.POGGIES]),
+    [RPS.LIZARD]: new Set([RPS.ROCK, RPS.SCISSORS, RPS.POGGIES]),
+    [RPS.GUN]: new Set([RPS.PAPER, RPS.LIZARD, RPS.SCISSORS, RPS.ROCK, RPS.SPOCK]),
+    [RPS.POGGIES]: new Set([RPS.GUN]),
 };
 
-function getResult(userChoice: string, computerChoice: string): string {
+function getResult(userChoice: RPS, computerChoice: RPS): string {
 
     if (userChoice === computerChoice) {
         return "It's a tie!";
     }
-    if (beatenBy [userChoice] === computerChoice) {
+    if (beatenBy [userChoice].has (computerChoice)) {
         return "You lose :(";
     }
-    if (beatenBy [computerChoice] === userChoice) {
+    if (beatenBy [computerChoice].has (userChoice)) {
         return "You win!";
     }
     
@@ -37,15 +52,22 @@ function getResult(userChoice: string, computerChoice: string): string {
     throw new Error("Not implemented, get gud");
 }    
 
-function cleanup(str: string): string | null {
-    if (typeof str === "string") {
-        return str.trim().toLowerCase();
+function cleanup(str: string): RPS | null {
+    if (typeof str !== "string") {
+        return null;
     }
-    return null;
+
+    const clean: string = str.trim().toLowerCase();
+    if (!Object.hasOwnProperty.call(beatenBy, clean)) {
+        return null;
+    }
+
+    // here, our input must be a string -- it alos must be a valid choice
+    return clean as RPS;
 }
 
 function main() {
-    const choices = Object.keys(beatenBy);
+    const choices = Object.keys(beatenBy) as RPS[];
 
     const userChoice = cleanup(process.argv[2]);
     if (Object.hasOwnProperty.call(beatenBy, userChoice)) {
