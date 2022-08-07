@@ -8,10 +8,9 @@
         "esModuleInterop": true,
         "outDir": "dist",
         "declaration": true,
-        "rootDir": "./src"
+        "rootDir": "src"
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "types", "dist"],
     "typeRoots": ["types", "./node_modules/@types"],
-
 }
